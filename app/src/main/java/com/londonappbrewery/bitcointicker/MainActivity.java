@@ -84,18 +84,25 @@ public class MainActivity extends AppCompatActivity {
     private void letsDoSomeNetworking(String url) {
 
         AsyncHttpClient client = new AsyncHttpClient();
-        client.setBasicAuth("x-ba-key",public_key);
-        client.get(url, new AsyncHttpResponseHandler() {
+        //client.setBasicAuth("x-ba-key",public_key);
+
+        client.get(url, new JsonHttpResponseHandler(){
             @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                Log.d("Bitcoin", "onSuccess: " + responseBody.toString());
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                int bitcoin = Log.d("Bitcoin", "onSuccess: " + response.toString());
+                try {
+                    String mText = response.getString("ask");
+                    mPriceTextView.setText(mText);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                Log.d("Bitcoin", "onFailure: " + error.toString());
-                Log.d("Bitcoin", "onFailure: "+ responseBody.toString());
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.e("Bitcoin", "Fail: "+ throwable.toString());
+                Log.d("Bitcoin", "Status Code: " + statusCode);
 
             }
         });
